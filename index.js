@@ -1,6 +1,18 @@
 // Check if the user is logged in (you can use more secure methods for this in a real application)
 var isLoggedIn = false;
 
+function checkLogin() {
+    const email = document.getElementById('login-email');
+    const password = document.getElementById('login-password');
+    if (email.value === '' || password.value === '') {
+        return false
+    }
+    else {
+        return true
+    }
+
+}
+
 function login() {
     // Perform login logic (you can add your authentication logic here)
 
@@ -190,23 +202,29 @@ async function fetchServerData() {
 
 document.getElementById('login-submit').addEventListener('click', async (e) => {
     e.preventDefault()
-    await fetch('https://01.kood.tech/api/auth/signin', {
-        method: 'POST',
-        headers: {
-            Authorization: `Basic ${btoa(`${document.getElementById('login-email').value}:${document.getElementById('login-password').value}`)}`
-        }
-    }).then(response => {
-        if (!response.ok) {
-            console.log('logging in problem', response)
-        } else {
-            return response.json()
-        }
-    }).then(token => {
-        //update login form UI after successful fetch
-        login()
-        localStorage.setItem('jwt_token', token)
-        fetchServerData()
-    }).catch(error => {
-        console.log(error)
-    })
+
+    if (checkLogin()) {
+        await fetch('https://01.kood.tech/api/auth/signin', {
+            method: 'POST',
+            headers: {
+                Authorization: `Basic ${btoa(`${document.getElementById('login-email').value}:${document.getElementById('login-password').value}`)}`
+            }
+        }).then(response => {
+            if (response.status != 200) {
+                console.log(response)
+                throw new Error('Trouble logging in. Please try again.')
+            } else {
+                return response.json()
+            }
+        }).then(token => {
+            //update login form UI after successful fetch
+            login()
+            localStorage.setItem('jwt_token', token)
+            fetchServerData()
+        }).catch(error => {
+            alert(error.message)
+        })
+    } else {
+        alert('Invalid login credentials. Please try logging again.')
+    }
 });
