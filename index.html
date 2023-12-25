@@ -14,22 +14,18 @@
 <body>
     <div id="login-container">
         <form id="login-form">
-            <input type="email" name="email" id="login-email" placeholder="Email">
-            <input type="password" name="password" id="login-password">
+            <input type="email" name="email" id="login-email" placeholder="Email || user name">
+            <input type="password" name="password" id="login-password" placeholder="Password">
             <p id="error-container"></p>
-            <button id="login-submit">Login</button>
+            <button id="login-submit">Log in</button>
         </form>
     </div>
 
     <div id="content-container" style="display:none;">
-        <p id="welcome-message">Welcome to the content! <button onclick="logout()">Logout</button></p>
+        <button onclick="logout()">Log out</button>
     </div>
 
     <script src="index.js"></script>
-
-    <!-- <script>
-        
-    </script> -->
 </body>
 
 </html>
