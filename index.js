@@ -149,39 +149,42 @@ function displayStudentSkills(data) {
     circle.setAttribute('cy', '50')
     circle.setAttribute('r', '50')
     console.log(skillProgress)
-    svg.appendChild(circle)
 
-    //convert set of skillnames into array to iterate over it for clock hand names
-    skillNames = Array.from(skillNames)
-    for (let i = 0; i < 12; i++) {
-        //draws a circle and a line
-        let group = document.createElementNS(ns, 'g')
-        let line = document.createElementNS(ns, 'line')
-        let angle = (Math.PI / 6) * i
-        let x = 50 + 50 * Math.cos(angle)
-        let y = 50 + 50 * Math.sin(angle)
-        line.setAttribute("x1", x.toString())
-        line.setAttribute("y1", y.toString())
-        line.setAttribute("x2", "50")
-        line.setAttribute("y2", "50")
-        line.setAttribute('stroke', 'rgb(0, 0, 0)')
-        line.setAttribute('stroke-width', '0.75')
-        group.appendChild(line)
+}
 
-        //draws text near lines
-        let text = document.createElementNS(ns, 'text')
-        text.setAttribute('x', (50 + 70 * Math.cos(angle)).toString())
-        text.setAttribute('y', (50 + 70 * Math.sin(angle)).toString())
-        text.setAttribute('text-anchor', 'middle')
-        text.setAttribute('dominant-baseline', 'middle')
-        text.innerHTML = skillNames[i]
-        group.appendChild(text)
+function displayAuditRatio(auditXpDown, auditXpUp) {
+    const wrapper = document.createElement('article')
+    wrapper.classList.add('auditRatio')
+    const ratio = Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(auditXpUp / auditXpDown)
+    const heading = document.createElement('h1')
+    heading.innerText = 'Audits ratio'
+    wrapper.appendChild(heading)
+    let roundedXpUp
+    let roundedXPDown
 
-        svg.appendChild(group)
+    //rounding xp into readable format
+    if (auditXpUp.toString().length >= 6) {
+        roundedXpUp = Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 2 }).format(parseInt(auditXpUp))
+    } else {
+        roundedXpUp = Intl.NumberFormat("en", { notation: "compact", maximumSignificantDigits: 3 }).format(parseInt(auditXpUp))
+    }
+    if (auditXpDown.toString().length >= 6) {
+        roundedXPDown = Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 2 }).format(parseInt(auditXpDown))
+    } else {
+        roundedXPDown = Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 2 }).format(parseInt(auditXpDown))
     }
 
-    wrapper.appendChild(svg)
-    wrapper.classList.add('skills')
+    const done = document.createElement('p')
+    done.innerText = `Done ${roundedXpUp}`
+    wrapper.appendChild(done)
+    const recieved = document.createElement('p')
+    recieved.innerText = `Received ${roundedXPDown}`
+    wrapper.appendChild(recieved)
+
+    const displayRatio = document.createElement('p')
+    displayRatio.innerText = `Your audit ratio: ${ratio}`
+    wrapper.appendChild(displayRatio)
+
     return wrapper
 }
 
@@ -195,6 +198,9 @@ function displayUserData(data) {
     //contains student profile info
     const profile = displayProfileInfo(data.id, data.login, data.attrs)
     studentInfo.appendChild(profile)
+
+    const audit = displayAuditRatio(data.totalDown, data.totalUp)
+    studentInfo.appendChild(audit)
     //contains sutdent skills
     const skills = displayStudentSkills(data)
     studentInfo.appendChild(skills)
