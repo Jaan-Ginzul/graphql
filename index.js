@@ -132,11 +132,41 @@ function displayStudentSkills(data) {
         }
     }
 
-    //Started working on a circle with lines for 12 different skills
-    const svg = document.createElement('svg')
-    svg.setAttribute('viewBox', ' 0 0 100 100')
-    svg.text
-    console.log(skillProgress)
+            //Started working on a circle with lines for 12 different skills
+            const ns = "http://www.w3.org/2000/svg"
+            const svg = document.createElementNS(ns, 'svg');
+            svg.setAttribute('viewBox', ' 0 0 100 100')
+            svg.setAttribute('style', 'overflow: visible')
+            //svg.text
+            svg.classList.add("skills")
+            const circle = document.createElementNS(ns, 'circle');
+            circle.setAttribute('fill', 'none')
+            circle.setAttribute('stroke', 'rgb(0, 0, 0)')
+            circle.setAttribute('stroke-width', '0.75')
+            circle.setAttribute('cx', '50')
+            circle.setAttribute('cy', '50')
+            circle.setAttribute('r', '50')
+            console.log(skillProgress)
+            svg.appendChild(circle)
+
+            coordinates = [["50", "0"], ["100", "50"], ["50", "100"], ["0", "50"]]
+
+            for (let i = 0; i < 4; i++) {
+                let group = document.createElementNS(ns, 'g')
+                let line = document.createElementNS(ns, 'line');
+                line.setAttribute("x1", coordinates[i][0])
+                line.setAttribute("y1", coordinates[i][1])
+                line.setAttribute("x2", "50")
+                line.setAttribute("y2", "50")
+                line.setAttribute('stroke', 'rgb(0, 0, 0)')
+                line.setAttribute('stroke-width', '0.75')
+                group.appendChild(line)
+                svg.appendChild(group)
+            }
+
+
+
+            return svg
 }
 
 function displayUserData(data) {
@@ -151,6 +181,7 @@ function displayUserData(data) {
     studentInfo.appendChild(profile)
     //contains sutdent skills
     const skills = displayStudentSkills(data)
+    studentInfo.appendChild(skills)
     if (isLoggedIn === false) {
         studentInfo.remove()
     }
