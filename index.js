@@ -103,11 +103,14 @@ function displayProfileInfo(id, username, attributes) {
         }
     }
 
-    return profileInfoContainer.appendChild(userInfoWrapper)
+    profileInfoContainer.appendChild(userInfoWrapper)
+    profileInfoContainer.classList.add('userInfo')
+    return profileInfoContainer
 }
 
 //creates skills element
 function displayStudentSkills(data) {
+    const wrapper = document.createElement('article')
     let skills = []
     let skillNames = new Set()
     let skillProgress = new Map
@@ -132,41 +135,54 @@ function displayStudentSkills(data) {
         }
     }
 
-            //Started working on a circle with lines for 12 different skills
-            const ns = "http://www.w3.org/2000/svg"
-            const svg = document.createElementNS(ns, 'svg');
-            svg.setAttribute('viewBox', ' 0 0 100 100')
-            svg.setAttribute('style', 'overflow: visible')
-            //svg.text
-            svg.classList.add("skills")
-            const circle = document.createElementNS(ns, 'circle');
-            circle.setAttribute('fill', 'none')
-            circle.setAttribute('stroke', 'rgb(0, 0, 0)')
-            circle.setAttribute('stroke-width', '0.75')
-            circle.setAttribute('cx', '50')
-            circle.setAttribute('cy', '50')
-            circle.setAttribute('r', '50')
-            console.log(skillProgress)
-            svg.appendChild(circle)
+    //Started working on a circle with lines for 12 different skills
+    const ns = "http://www.w3.org/2000/svg"
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', ' 0 0 100 100')
+    svg.setAttribute('style', 'overflow: visible')
+    // svg.classList.add("skills")
+    const circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('fill', 'none')
+    circle.setAttribute('stroke', 'rgb(0, 0, 0)')
+    circle.setAttribute('stroke-width', '0.75')
+    circle.setAttribute('cx', '50')
+    circle.setAttribute('cy', '50')
+    circle.setAttribute('r', '50')
+    console.log(skillProgress)
+    svg.appendChild(circle)
 
-            coordinates = [["50", "0"], ["100", "50"], ["50", "100"], ["0", "50"]]
+    //convert set of skillnames into array to iterate over it for clock hand names
+    skillNames = Array.from(skillNames)
+    for (let i = 0; i < 12; i++) {
+        //draws a circle and a line
+        let group = document.createElementNS(ns, 'g')
+        let line = document.createElementNS(ns, 'line')
+        let angle = (Math.PI / 6) * i
+        let x = 50 + 50 * Math.cos(angle)
+        let y = 50 + 50 * Math.sin(angle)
+        line.setAttribute("x1", x.toString())
+        line.setAttribute("y1", y.toString())
+        line.setAttribute("x2", "50")
+        line.setAttribute("y2", "50")
+        line.setAttribute('stroke', 'rgb(0, 0, 0)')
+        line.setAttribute('stroke-width', '0.75')
+        group.appendChild(line)
 
-            for (let i = 0; i < 4; i++) {
-                let group = document.createElementNS(ns, 'g')
-                let line = document.createElementNS(ns, 'line');
-                line.setAttribute("x1", coordinates[i][0])
-                line.setAttribute("y1", coordinates[i][1])
-                line.setAttribute("x2", "50")
-                line.setAttribute("y2", "50")
-                line.setAttribute('stroke', 'rgb(0, 0, 0)')
-                line.setAttribute('stroke-width', '0.75')
-                group.appendChild(line)
-                svg.appendChild(group)
-            }
+        //draws text near lines
+        let text = document.createElementNS(ns, 'text')
+        text.setAttribute('x', (50 + 70 * Math.cos(angle)).toString())
+        text.setAttribute('y', (50 + 70 * Math.sin(angle)).toString())
+        text.setAttribute('text-anchor', 'middle')
+        text.setAttribute('dominant-baseline', 'middle')
+        text.innerHTML = skillNames[i]
+        group.appendChild(text)
 
+        svg.appendChild(group)
+    }
 
-
-            return svg
+    wrapper.appendChild(svg)
+    wrapper.classList.add('skills')
+    return wrapper
 }
 
 function displayUserData(data) {
