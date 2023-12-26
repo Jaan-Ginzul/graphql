@@ -47,3 +47,39 @@ body {
 .skills {
     grid-area: 3 / 3 / 6 / 5;
 }
+
+
+.skillTooltip {
+    visibility: hidden;
+    position: absolute;
+    z-index: 2;
+    width: 100px;
+    color: white;
+    font-size: 12px;
+    background-color: #192733;
+    border-radius: 10px;
+    padding: 10px 15px 10px 15px;
+    top: -40px;
+    left: -50%;
+}
+
+/* .skillTooltip::before {
+    content: "";
+    position: absolute;
+    transform: rotate(45deg);
+    background-color: #192733;
+    padding: 5px;
+    z-index: 1;
+    top: 80%;
+    left: 45%;
+} */
+
+.hoverSkill:hover .skillTooltip {
+    visibility: visible;
+}
+
+.hoverSkill {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
