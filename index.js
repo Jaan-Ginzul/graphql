@@ -155,12 +155,13 @@ function displayStudentSkills(data) {
     skillNames = Array.from(skillNames)
     //create a path to be drawn over skill clock
     const path = document.createElementNS(ns, 'path')
-    path.setAttribute('fill', 'rgba(207, 139, 163, 0.5)')
+    path.setAttribute('fill', 'rgba(207, 139, 163, 0.9)')
     let constructedPath = ''
     //draws circle, clock lines and skill names
     for (let i = 0; i < 12; i++) {
         //draws a circle and a line
         let group = document.createElementNS(ns, 'g')
+        group.classList.add('sector')
         let line = document.createElementNS(ns, 'line')
         let angle = (Math.PI / 6) * i
         let x = 50 + 50 * Math.cos(angle)
@@ -179,11 +180,12 @@ function displayStudentSkills(data) {
         text.setAttribute('y', (50 + 70 * Math.sin(angle)).toString())
         text.setAttribute('text-anchor', 'middle')
         text.setAttribute('dominant-baseline', 'middle')
-        const tooltip = document.createElement('span')
-        tooltip.classList.add('skillTooltip')
-        tooltip.innerText = `Progress: ${skillNames[i]}`
-        text.innerHTML = `${skillNames[i]} ${tooltip.outerHTML}`
-        text.classList.add('hoverSkill')
+        text.innerHTML = `${skillNames[i]}`
+
+        //generate tooltip to display skill progress with text on hover
+        const tooltip = document.createElementNS(ns, 'title')
+        tooltip.textContent = `Progress: ${skillProgress.get(skillNames[i])}`
+        text.appendChild(tooltip)
         group.appendChild(text)
 
         //define a path for the current skill to draw path element
