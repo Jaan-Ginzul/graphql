@@ -1,5 +1,6 @@
 // Check if the user is logged in (you can use more secure methods for this in a real application)
 var isLoggedIn = false;
+const ns = "http://www.w3.org/2000/svg"
 
 function checkLogin() {
     const email = document.getElementById('login-email');
@@ -136,9 +137,8 @@ function displayStudentSkills(data) {
     }
 
     //Started working on a circle with lines for 12 different skills
-    const ns = "http://www.w3.org/2000/svg"
     const svg = document.createElementNS(ns, 'svg');
-    svg.setAttribute('viewBox', ' 0 0 100 100')
+    svg.setAttribute('viewBox', '0 0 100 100')
     svg.setAttribute('style', 'overflow: visible')
     // svg.classList.add("skills")
     const circle = document.createElementNS(ns, 'circle');
@@ -206,6 +206,84 @@ function displayStudentSkills(data) {
     return wrapper
 }
 
+function displayXpByProject(transactions) {
+    const wrapper = document.createElement('article')
+
+    const title = document.createElement('h1')
+    title.textContent = 'XP by project'
+    wrapper.appendChild(title)
+
+    let projectTransactions = []
+    let userXp = 0
+
+    for (const [key, value] of Object.entries(transactions)) {
+        if (value.type === 'xp' && !value.path.includes('piscine')) {
+            projectTransactions.push(value)
+            userXp += value.amount
+        }
+    }
+    console.log(userXp)
+    const svg = document.createElementNS(ns, 'svg')
+    svg.setAttribute('viewvBox', '0 0 100 200')
+
+    //y is used to position rectangles on top of each other
+    //heigth of each rectangle is subtracted form total heigth of svg viewbox
+    //so rectangles can stack on top of each other
+    let y = 100
+    let height = 100 / projectTransactions.length
+    //generates random colours to colour rectangels
+    const randomColour = () => { return `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})` }
+    //used to iterate over colours
+    for (const [key, value] of Object.entries(projectTransactions)) {
+        const group = document.createElementNS(ns, 'g')
+
+        const rect = document.createElementNS(ns, 'rect')
+        rect.setAttribute('width', '100')
+        rect.setAttribute('height', `${height}`)
+        rect.setAttribute('y', `${y -= height}`)
+        rect.setAttribute('x', '0')
+        rect.setAttribute('fill', `${randomColour()}`)
+        rect.addEventListener('mouseover', () => {
+            const text = document.createElementNS(ns, 'text')
+            text.setAttribute('x', '100')
+            text.setAttribute('y', `${rect.getAttribute('y')}`)
+            text.textContent = ` - ${value.path.split('/')[3]}: ${value.amount}`
+            rect.parentElement.appendChild(text)
+        })
+        rect.addEventListener('mouseleave', () => {
+            const text = Array.from(rect.parentElement.children)
+            rect.parentElement.removeChild(text[1])
+        })
+
+        const tooltip = document.createElementNS(ns, 'title')
+        tooltip.textContent = `${value.path.split('/')[3]}: ${value.amount}`
+
+        rect.appendChild(tooltip)
+        group.appendChild(rect)
+        svg.appendChild(group)
+    }
+
+    wrapper.appendChild(svg)
+    wrapper.classList.add('xp')
+
+    const changeColours = document.createElement('button')
+    changeColours.innerText = 'Change colours'
+    changeColours.addEventListener('click', () => {
+        const container = document.querySelector('.xp')
+        const rectangles = Array.from(container.querySelectorAll('rect'))
+        for (const [key, value] of Object.entries(rectangles)) {
+            value.setAttribute('fill', `${randomColour()}`)
+        }
+    })
+    wrapper.appendChild(changeColours)
+
+    const info = document.createElement('p')
+    info.textContent = `Total user XP: ${userXp}`
+    wrapper.appendChild(info)
+
+    return wrapper
+}
+
 function displayUserData(data) {
     //entire page
     const page = document.querySelector('body')
@@ -219,6 +297,10 @@ function displayUserData(data) {
     //contains sutdent skills
     const skills = displayStudentSkills(data)
     studentInfo.appendChild(skills)
+
+    const projectXp = displayXpByProject(data.transactions)
+    studentInfo.appendChild(projectXp)
+
     if (isLoggedIn === false) {
         studentInfo.remove()
     }
