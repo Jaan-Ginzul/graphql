@@ -269,8 +269,8 @@ function displayXpByProject(transactions) {
     //y is used to position rectangles on top of each other
     //heigth of each rectangle is subtracted form total heigth of svg viewbox
     //so rectangles can stack on top of each other
-    let y = 500
-    let height = 500 / projectTransactions.length
+    let y = 200
+    let height = 200 / projectTransactions.length
     //generates random colours to colour rectangels
     const randomColour = () => { return `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})` }
     //used to iterate over colours
@@ -286,7 +286,7 @@ function displayXpByProject(transactions) {
         rect.addEventListener('mouseover', () => {
             const text = document.createElementNS(ns, 'text')
             text.setAttribute('x', '100')
-            textHeight = parseFloat(rect.getAttribute('height'))*1.5+parseFloat(rect.getAttribute('y'))
+            textHeight = parseFloat(rect.getAttribute('height')) * 1.5 + parseFloat(rect.getAttribute('y'))
             text.setAttribute('y', `${textHeight}`)
             text.textContent = ` - ${value.path.split('/')[3]}: ${value.amount}`
             rect.parentElement.appendChild(text)
