@@ -252,25 +252,29 @@ function displayXpByProject(transactions) {
     let projectTransactions = []
     let userXp = 0
 
-    for (const [key, value] of Object.entries(transactions)) {
+    for (const value of Object.values(transactions)) {
         if (value.type === 'xp' && !value.path.includes('piscine')) {
             projectTransactions.push(value)
             userXp += value.amount
         }
     }
     console.log(userXp)
+    //additional wrapper for svg for overflow
+    const svgWrapper = document.createElement('div')
+    svgWrapper.setAttribute('style', 'overflow:scroll')
     const svg = document.createElementNS(ns, 'svg')
-    svg.setAttribute('viewvBox', '0 0 100 200')
+    svg.setAttribute('viewBox', '0 0 200 200')
+    svg.setAttribute('style', 'overflow:scroll')
 
     //y is used to position rectangles on top of each other
     //heigth of each rectangle is subtracted form total heigth of svg viewbox
     //so rectangles can stack on top of each other
-    let y = 100
-    let height = 100 / projectTransactions.length
+    let y = 500
+    let height = 500 / projectTransactions.length
     //generates random colours to colour rectangels
     const randomColour = () => { return `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})` }
     //used to iterate over colours
-    for (const [key, value] of Object.entries(projectTransactions)) {
+    for (const value of Object.values(projectTransactions)) {
         const group = document.createElementNS(ns, 'g')
 
         const rect = document.createElementNS(ns, 'rect')
@@ -282,7 +286,8 @@ function displayXpByProject(transactions) {
         rect.addEventListener('mouseover', () => {
             const text = document.createElementNS(ns, 'text')
             text.setAttribute('x', '100')
-            text.setAttribute('y', `${rect.getAttribute('y')}`)
+            textHeight = parseFloat(rect.getAttribute('height'))*1.5+parseFloat(rect.getAttribute('y'))
+            text.setAttribute('y', `${textHeight}`)
             text.textContent = ` - ${value.path.split('/')[3]}: ${value.amount}`
             rect.parentElement.appendChild(text)
         })
@@ -291,15 +296,12 @@ function displayXpByProject(transactions) {
             rect.parentElement.removeChild(text[1])
         })
 
-        const tooltip = document.createElementNS(ns, 'title')
-        tooltip.textContent = `${value.path.split('/')[3]}: ${value.amount}`
-
-        rect.appendChild(tooltip)
         group.appendChild(rect)
         svg.appendChild(group)
     }
 
-    wrapper.appendChild(svg)
+    svgWrapper.appendChild(svg)
+    wrapper.appendChild(svgWrapper)
     wrapper.classList.add('xp')
 
     const changeColours = document.createElement('button')
@@ -307,7 +309,7 @@ function displayXpByProject(transactions) {
     changeColours.addEventListener('click', () => {
         const container = document.querySelector('.xp')
         const rectangles = Array.from(container.querySelectorAll('rect'))
-        for (const [key, value] of Object.entries(rectangles)) {
+        for (const value of Object.values(rectangles)) {
             value.setAttribute('fill', `${randomColour()}`)
         }
     })
@@ -316,6 +318,17 @@ function displayXpByProject(transactions) {
     const info = document.createElement('p')
     info.textContent = `Total user XP: ${userXp}`
     wrapper.appendChild(info)
+
+    const range = document.createElement('input')
+    range.setAttribute('type', 'range')
+    range.setAttribute('min', '0')
+    range.setAttribute('max', `${projectTransactions.length}`)
+
+    range.addEventListener("change", (event) => {
+        console.log(event.target.value)
+    })
+
+    wrapper.appendChild(range)
 
     return wrapper
 }
