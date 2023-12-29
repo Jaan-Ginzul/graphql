@@ -131,13 +131,40 @@ function displayAuditRatio(auditXpDown, auditXpUp) {
         roundedXPDown = Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 2 }).format(parseInt(auditXpDown))
     }
 
+    const doneGraph = document.createElementNS(ns, 'svg')
+    const receivedGraph = document.createElementNS(ns, 'svg')
+    doneGraph.setAttribute('viewBox', '0 0 100 10')
+    receivedGraph.setAttribute('viewBox', '0 0 100 10')
+    const doneRect = document.createElementNS(ns, 'rect')
+    const recievedRect = document.createElementNS(ns, 'rect')
+
+    if ((ratio - 1) > 0) {
+        doneRect.setAttribute('width', '100')
+        less = 100 - 100*(ratio - 1)
+        recievedRect.setAttribute('width', `${less}`)
+    }else if ((ratio -1 < 0)) {
+        recievedRect.setAttribute('width', '100')
+        less = 100 - 100*(1 - ratio)
+        doneRect.setAttribute('width', `${less}`)
+    } else {
+        doneRect.setAttribute('width', '100')
+        recievedRect.setAttribute('width', '100')
+    }
+    doneRect.setAttribute('height', '5')
+    recievedRect.setAttribute('height', '5')
+    doneRect.setAttribute('fill', '#c5dbc4')
+    recievedRect.setAttribute('fill', '#ffadad')
+    doneGraph.appendChild(doneRect)
+    receivedGraph.appendChild(recievedRect)
+
     const done = document.createElement('p')
     done.innerText = `Done ${roundedXpUp}`
     wrapper.appendChild(done)
+    wrapper.appendChild(doneGraph)
     const recieved = document.createElement('p')
     recieved.innerText = `Received ${roundedXPDown}`
     wrapper.appendChild(recieved)
-
+    wrapper.appendChild(receivedGraph)
     const displayRatio = document.createElement('p')
     displayRatio.innerText = `Your audit ratio: ${ratio}`
     wrapper.appendChild(displayRatio)
@@ -255,37 +282,59 @@ function displayXpByProject(transactions) {
     let projectTransactions = []
     let userXp = 0
 
-    for (const [key, value] of Object.entries(transactions)) {
+    for (const value of Object.values(transactions)) {
         if (value.type === 'xp' && !value.path.includes('piscine')) {
             projectTransactions.push(value)
             userXp += value.amount
         }
     }
+    console.log(`project count: ${projectTransactions.length}`)
     console.log(userXp)
+    //additional wrapper for svg for overflow
+    const svgWrapper = document.createElement('div')
+    svgWrapper.setAttribute('style', 'overflow:scroll')
     const svg = document.createElementNS(ns, 'svg')
-    svg.setAttribute('viewvBox', '0 0 100 200')
+    svg.setAttribute('viewBox', '0 0 220 200')
+    svg.setAttribute('style', 'overflow:scroll')
 
     //y is used to position rectangles on top of each other
     //heigth of each rectangle is subtracted form total heigth of svg viewbox
     //so rectangles can stack on top of each other
-    let y = 100
-    let height = 100 / projectTransactions.length
+    //dimensions of inner squares
+    // Calculate the number of rows and columns in the grid
+    var gridRows = Math.ceil(Math.sqrt(projectTransactions.length));
+    var gridCols = Math.ceil(projectTransactions.length / gridRows);
+
+    // Calculate the side length of each smaller square
+    var s = 200 / Math.max(gridRows, gridCols);
+
+    let y = 0
+    let height = s
+    let x = 0
+    let width = s
+    let rectsInRow = Math.floor(200 / width)
+    let rects = 0
+    let rows = 0
     //generates random colours to colour rectangels
     const randomColour = () => { return `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})` }
     //used to iterate over colours
-    for (const [key, value] of Object.entries(projectTransactions)) {
+    for (const value of Object.values(projectTransactions)) {
         const group = document.createElementNS(ns, 'g')
 
+        if (rects === rectsInRow) {
+            rects = 0
+            rows++
+        }
         const rect = document.createElementNS(ns, 'rect')
-        rect.setAttribute('width', '100')
-        rect.setAttribute('height', `${height}`)
-        rect.setAttribute('y', `${y -= height}`)
-        rect.setAttribute('x', '0')
+        rect.setAttribute('width', `${width - 10}`)
+        rect.setAttribute('x', `${x + (width * rects)}`)
+        rect.setAttribute('height', `${height - 10}`)
+        rect.setAttribute('y', `${y + (height * rows)}`)
         rect.setAttribute('fill', `${randomColour()}`)
         rect.addEventListener('mouseover', () => {
             const text = document.createElementNS(ns, 'text')
-            text.setAttribute('x', '100')
-            text.setAttribute('y', `${rect.getAttribute('y')}`)
+            text.setAttribute('x', '0')
+            text.setAttribute('y', `180`)
             text.textContent = ` - ${value.path.split('/')[3]}: ${value.amount}`
             rect.parentElement.appendChild(text)
         })
@@ -294,15 +343,13 @@ function displayXpByProject(transactions) {
             rect.parentElement.removeChild(text[1])
         })
 
-        const tooltip = document.createElementNS(ns, 'title')
-        tooltip.textContent = `${value.path.split('/')[3]}: ${value.amount}`
-
-        rect.appendChild(tooltip)
+        rects++
         group.appendChild(rect)
         svg.appendChild(group)
     }
 
-    wrapper.appendChild(svg)
+    svgWrapper.appendChild(svg)
+    wrapper.appendChild(svgWrapper)
     wrapper.classList.add('xp')
 
     const changeColours = document.createElement('button')
@@ -310,7 +357,7 @@ function displayXpByProject(transactions) {
     changeColours.addEventListener('click', () => {
         const container = document.querySelector('.xp')
         const rectangles = Array.from(container.querySelectorAll('rect'))
-        for (const [key, value] of Object.entries(rectangles)) {
+        for (const value of Object.values(rectangles)) {
             value.setAttribute('fill', `${randomColour()}`)
         }
     })
