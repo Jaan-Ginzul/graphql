@@ -46,6 +46,20 @@ body {
     grid-area: 3 / 1 / 6 / 3;
 }
 
+.xp button {
+    border-radius: 10px;
+    box-shadow: 0rem 0rem .7rem rgba(0, 0, 0, 0.3);
+    border: none;
+    padding: .5rem;
+    background-color: rgba(207, 139, 163, 0.9);
+    color: white;
+}
+
+.xp button:active {
+    color: black;
+    background-color: inherit;
+}
+
 .skills {
     grid-area: 3 / 3 / 6 / 5;
 }
