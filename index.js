@@ -148,6 +148,9 @@ function displayAuditRatio(auditXpDown, auditXpUp) {
 //creates skills element
 function displayStudentSkills(data) {
     const wrapper = document.createElement('article')
+    const heading = document.createElement('h1')
+    heading.innerText = 'Your skills:'
+    wrapper.appendChild(heading)
     let skills = []
     let skillNames = new Set()
     let skillProgress = new Map
@@ -174,16 +177,16 @@ function displayStudentSkills(data) {
 
     //Started working on a circle with lines for 12 different skills
     const svg = document.createElementNS(ns, 'svg');
-    svg.setAttribute('viewBox', '0 0 100 100')
+    svg.setAttribute('viewBox', '0 0 120 120')
     svg.setAttribute('style', 'overflow: visible')
     // svg.classList.add("skills")
     const circle = document.createElementNS(ns, 'circle');
     circle.setAttribute('fill', 'none')
     circle.setAttribute('stroke', 'rgb(0, 0, 0)')
     circle.setAttribute('stroke-width', '0.75')
-    circle.setAttribute('cx', '50')
-    circle.setAttribute('cy', '50')
-    circle.setAttribute('r', '50')
+    circle.setAttribute('cx', '60')
+    circle.setAttribute('cy', '60')
+    circle.setAttribute('r', '30')
     console.log(skillProgress)
     svg.appendChild(circle)
 
@@ -200,20 +203,20 @@ function displayStudentSkills(data) {
         group.classList.add('sector')
         let line = document.createElementNS(ns, 'line')
         let angle = (Math.PI / 6) * i
-        let x = 50 + 50 * Math.cos(angle)
-        let y = 50 + 50 * Math.sin(angle)
+        let x = 60 + 30 * Math.cos(angle)
+        let y = 60 + 30 * Math.sin(angle)
         line.setAttribute("x1", x.toString())
         line.setAttribute("y1", y.toString())
-        line.setAttribute("x2", "50")
-        line.setAttribute("y2", "50")
+        line.setAttribute("x2", "60")
+        line.setAttribute("y2", "60")
         line.setAttribute('stroke', 'rgb(0, 0, 0)')
         line.setAttribute('stroke-width', '0.75')
         group.appendChild(line)
 
         //draws text near lines
         let text = document.createElementNS(ns, 'text')
-        text.setAttribute('x', (50 + 70 * Math.cos(angle)).toString())
-        text.setAttribute('y', (50 + 70 * Math.sin(angle)).toString())
+        text.setAttribute('x', (60 + 47 * Math.cos(angle)).toString())
+        text.setAttribute('y', (60 + 47 * Math.sin(angle)).toString())
         text.setAttribute('text-anchor', 'middle')
         text.setAttribute('dominant-baseline', 'middle')
         text.innerHTML = `${skillNames[i]}`
@@ -226,9 +229,9 @@ function displayStudentSkills(data) {
 
         //define a path for the current skill to draw path element
         if (i === 0) {
-            constructedPath += `M ${50 + 50 * Math.cos(angle) * (skillProgress.get(skillNames[i]) / 100)} ${50 + 50 * Math.sin(angle) * (skillProgress.get(skillNames[i]) / 100)}`
+            constructedPath += `M ${60 + 30 * Math.cos(angle) * (skillProgress.get(skillNames[i]) / 100)} ${60 + 30 * Math.sin(angle) * (skillProgress.get(skillNames[i]) / 100)}`
         } else {
-            constructedPath += ` L ${50 + 50 * Math.cos(angle) * (skillProgress.get(skillNames[i]) / 100)} ${50 + 50 * Math.sin(angle) * (skillProgress.get(skillNames[i]) / 100)}`
+            constructedPath += ` L ${60 + 30 * Math.cos(angle) * (skillProgress.get(skillNames[i]) / 100)} ${60 + 30 * Math.sin(angle) * (skillProgress.get(skillNames[i]) / 100)}`
         }
 
         svg.appendChild(group)
