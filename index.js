@@ -131,13 +131,40 @@ function displayAuditRatio(auditXpDown, auditXpUp) {
         roundedXPDown = Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 2 }).format(parseInt(auditXpDown))
     }
 
+    const doneGraph = document.createElementNS(ns, 'svg')
+    const receivedGraph = document.createElementNS(ns, 'svg')
+    doneGraph.setAttribute('viewBox', '0 0 100 10')
+    receivedGraph.setAttribute('viewBox', '0 0 100 10')
+    const doneRect = document.createElementNS(ns, 'rect')
+    const recievedRect = document.createElementNS(ns, 'rect')
+
+    if ((ratio - 1) > 0) {
+        doneRect.setAttribute('width', '100')
+        less = 100 - 100*(ratio - 1)
+        recievedRect.setAttribute('width', `${less}`)
+    }else if ((ratio -1 < 0)) {
+        recievedRect.setAttribute('width', '100')
+        less = 100 - 100*(1 - ratio)
+        doneRect.setAttribute('width', `${less}`)
+    } else {
+        doneRect.setAttribute('width', '100')
+        recievedRect.setAttribute('width', '100')
+    }
+    doneRect.setAttribute('height', '5')
+    recievedRect.setAttribute('height', '5')
+    doneRect.setAttribute('fill', '#c5dbc4')
+    recievedRect.setAttribute('fill', '#ffadad')
+    doneGraph.appendChild(doneRect)
+    receivedGraph.appendChild(recievedRect)
+
     const done = document.createElement('p')
     done.innerText = `Done ${roundedXpUp}`
     wrapper.appendChild(done)
+    wrapper.appendChild(doneGraph)
     const recieved = document.createElement('p')
     recieved.innerText = `Received ${roundedXPDown}`
     wrapper.appendChild(recieved)
-
+    wrapper.appendChild(receivedGraph)
     const displayRatio = document.createElement('p')
     displayRatio.innerText = `Your audit ratio: ${ratio}`
     wrapper.appendChild(displayRatio)
