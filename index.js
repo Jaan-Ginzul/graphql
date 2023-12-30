@@ -140,11 +140,11 @@ function displayAuditRatio(auditXpDown, auditXpUp) {
 
     if ((ratio - 1) > 0) {
         doneRect.setAttribute('width', '100')
-        less = 100 - 100*(ratio - 1)
+        less = 100 - 100 * (ratio - 1)
         recievedRect.setAttribute('width', `${less}`)
-    }else if ((ratio -1 < 0)) {
+    } else if ((ratio - 1 < 0)) {
         recievedRect.setAttribute('width', '100')
-        less = 100 - 100*(1 - ratio)
+        less = 100 - 100 * (1 - ratio)
         doneRect.setAttribute('width', `${less}`)
     } else {
         doneRect.setAttribute('width', '100')
@@ -153,7 +153,7 @@ function displayAuditRatio(auditXpDown, auditXpUp) {
     doneRect.setAttribute('height', '5')
     recievedRect.setAttribute('height', '5')
     doneRect.setAttribute('fill', '#c5dbc4')
-    recievedRect.setAttribute('fill', '#ffadad')
+    recievedRect.setAttribute('fill', 'rgb(207, 139, 163)')
     doneGraph.appendChild(doneRect)
     receivedGraph.appendChild(recievedRect)
 
@@ -291,11 +291,8 @@ function displayXpByProject(transactions) {
     console.log(`project count: ${projectTransactions.length}`)
     console.log(userXp)
     //additional wrapper for svg for overflow
-    const svgWrapper = document.createElement('div')
-    svgWrapper.setAttribute('style', 'overflow:scroll')
     const svg = document.createElementNS(ns, 'svg')
-    svg.setAttribute('viewBox', '0 0 220 200')
-    svg.setAttribute('style', 'overflow:scroll')
+    svg.setAttribute('viewBox', '0 0 200 260')
 
     //y is used to position rectangles on top of each other
     //heigth of each rectangle is subtracted form total heigth of svg viewbox
@@ -334,7 +331,7 @@ function displayXpByProject(transactions) {
         rect.addEventListener('mouseover', () => {
             const text = document.createElementNS(ns, 'text')
             text.setAttribute('x', '0')
-            text.setAttribute('y', `180`)
+            text.setAttribute('y', `245`)
             text.textContent = ` - ${value.path.split('/')[3]}: ${value.amount}`
             rect.parentElement.appendChild(text)
         })
@@ -348,8 +345,9 @@ function displayXpByProject(transactions) {
         svg.appendChild(group)
     }
 
-    svgWrapper.appendChild(svg)
-    wrapper.appendChild(svgWrapper)
+    // svgWrapper.appendChild(svg)
+    // wrapper.appendChild(svgWrapper)
+    wrapper.appendChild(svg)
     wrapper.classList.add('xp')
 
     const changeColours = document.createElement('button')

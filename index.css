@@ -26,7 +26,7 @@ body {
     grid-row-gap: 1rem;
 }
 
-.parent>* {
+.parent > * {
     background-color: lemonchiffon;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -51,7 +51,8 @@ body {
     box-shadow: 0rem 0rem .7rem rgba(0, 0, 0, 0.3);
     border: none;
     padding: .5rem;
-    background-color: rgba(207, 139, 163, 0.9);
+    margin: 1rem 0 0 0;
+    background-color: rgb(207, 139, 163);
     color: white;
 }
 
