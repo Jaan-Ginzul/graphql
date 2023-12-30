@@ -42,16 +42,12 @@ function logout() {
 
 function updateUI() {
     var loginContainer = document.getElementById('login-container');
-    var contentContainer = document.getElementById('content-container');
-    // var content = document.getElementById('main')
 
     // Show or hide elements based on the login status
     if (isLoggedIn) {
         loginContainer.style.display = 'none';
-        contentContainer.style.display = 'block';
     } else {
         loginContainer.style.display = 'block';
-        contentContainer.style.display = 'none';
         // Clear content when logging out
         const body = document.querySelector('body');
         const main = document.querySelector('main');
@@ -62,6 +58,11 @@ function updateUI() {
 
 function displayProfileInfo(id, username, attributes) {
     const profileInfoContainer = document.createElement('article')
+
+    const infoMsg = document.createElement('h1')
+    infoMsg.innerText = "Student's info"
+    profileInfoContainer.appendChild(infoMsg)
+
     const userInfoWrapper = document.createElement('ul')
 
     const uId = document.createElement('li')
@@ -176,7 +177,7 @@ function displayAuditRatio(auditXpDown, auditXpUp) {
 function displayStudentSkills(data) {
     const wrapper = document.createElement('article')
     const heading = document.createElement('h1')
-    heading.innerText = 'Your skills:'
+    heading.innerText = 'Your skills'
     wrapper.appendChild(heading)
     let skills = []
     let skillNames = new Set()
@@ -345,8 +346,6 @@ function displayXpByProject(transactions) {
         svg.appendChild(group)
     }
 
-    // svgWrapper.appendChild(svg)
-    // wrapper.appendChild(svgWrapper)
     wrapper.appendChild(svg)
     wrapper.classList.add('xp')
 
@@ -368,13 +367,35 @@ function displayXpByProject(transactions) {
     return wrapper
 }
 
+function displayWelcomeMsg(username) {
+    const wrapper = document.createElement('article')
+    wrapper.classList.add('welcome')
+
+    const welcomeMsg = document.createElement('h1')
+    welcomeMsg.innerText = `Hello, ${username}!`
+    wrapper.appendChild(welcomeMsg)
+
+    const logoutBtn = document.createElement('button')
+    logoutBtn.innerText = 'Logout'
+    logoutBtn.addEventListener('click', logout)
+    wrapper.appendChild(logoutBtn)
+
+    return wrapper
+}
+
 function displayUserData(data) {
     //entire page
     const page = document.querySelector('body')
     //container containing all info which is divided in 3 parts
+
+
     const studentInfo = document.createElement('main')
     studentInfo.classList.add('parent')
     page.appendChild(studentInfo)
+
+    const welcomeBanner = displayWelcomeMsg(data.login)
+    studentInfo.appendChild(welcomeBanner)
+
     //contains student profile info
     const profile = displayProfileInfo(data.id, data.login, data.attrs)
     studentInfo.appendChild(profile)
@@ -387,10 +408,6 @@ function displayUserData(data) {
 
     const projectXp = displayXpByProject(data.transactions)
     studentInfo.appendChild(projectXp)
-
-    if (isLoggedIn === false) {
-        studentInfo.remove()
-    }
 }
 
 async function fetchServerData() {
