@@ -47,7 +47,7 @@ function updateUI() {
     if (isLoggedIn) {
         loginContainer.style.display = 'none';
     } else {
-        loginContainer.style.display = 'block';
+        loginContainer.style.display = 'flex';
         // Clear content when logging out
         const body = document.querySelector('body');
         const main = document.querySelector('main');
@@ -402,12 +402,13 @@ function displayUserData(data) {
 
     const audit = displayAuditRatio(data.totalDown, data.totalUp)
     studentInfo.appendChild(audit)
+    
+    const projectXp = displayXpByProject(data.transactions)
+    studentInfo.appendChild(projectXp)
+
     //contains sutdent skills
     const skills = displayStudentSkills(data)
     studentInfo.appendChild(skills)
-
-    const projectXp = displayXpByProject(data.transactions)
-    studentInfo.appendChild(projectXp)
 }
 
 async function fetchServerData() {
