@@ -225,12 +225,14 @@ function displayStudentSkills(data) {
     path.setAttribute('fill', 'rgba(207, 139, 163, 0.9)')
     let constructedPath = ''
     //draws circle, clock lines and skill names
-    for (let i = 0; i < 12; i++) {
+
+    console.log('unique items in set', skillNames.length)
+    for (let i = 0; i < skillNames.length; i++) {
         //draws a circle and a line
         let group = document.createElementNS(ns, 'g')
         group.classList.add('sector')
         let line = document.createElementNS(ns, 'line')
-        let angle = (Math.PI / 6) * i
+        let angle = (2 * Math.PI / skillNames.length) * i
         let x = 60 + 30 * Math.cos(angle)
         let y = 60 + 30 * Math.sin(angle)
         line.setAttribute("x1", x.toString())
